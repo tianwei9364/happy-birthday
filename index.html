@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生日快乐！</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Microsoft YaHei', sans-serif;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            z-index: 10;
+        }
+
+        h1 {
+            color: #ff6b6b;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s forwards;
+        }
+
+        p {
+            color: #555;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeUp 1s 0.5s forwards;
+        }
+
+        /* 简单的 CSS 蛋糕 */
+        .cake {
+            position: relative;
+            width: 150px;
+            height: 120px;
+            background: #fce4ec;
+            border-radius: 10px 10px 5px 5px;
+            margin: 0 auto 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .cake:active {
+            transform: scale(0.95);
+        }
+
+        .layer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40px;
+            background: #f8bbd0;
+            border-radius: 5px;
+        }
+        
+        .layer-top {
+            bottom: 40px;
+            background: #f48fb1;
+        }
+
+        .candle {
+            position: absolute;
+            top: -30px;
+            width: 10px;
+            height: 30px;
+            background: #ffc107;
+            border-radius: 2px;
+        }
+
+        .flame {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 12px;
+            background: #ff5722;
+            border-radius: 50% 50% 20% 20%;
+            animation: flicker 1s infinite alternate;
+            box-shadow: 0 0 10px #ff5722;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+
+        @keyframes flicker {
+            0% { transform: translateX(-50%) scale(1); opacity: 1; }
+            100% { transform: translateX(-50%) scale(1.2); opacity: 0.8; }
+        }
+
+        @keyframes fadeUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- 修改这里：名字 -->
+        <h1>Happy Birthday! 🎂</h1>
+        
+        <!-- 修改这里：祝福语 -->
+        <p>今天是属于你的特别日子<br>点一下蛋糕许个愿吧！</p>
+
+        <div class="cake" id="cakeBtn">
+            <div class="layer"></div>
+            <div class="layer layer-top"></div>
+            <div class="candle">
+                <div class="flame" id="flame"></div>
+            </div>
+        </div>
+
+        <button class="btn" onclick="celebrate()">点击领取礼物</button>
+    </div>
+
+    <!-- 引用烟花特效库 -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>
+        // 点击蛋糕吹灭蜡烛
+        document.getElementById('cakeBtn').addEventListener('click', function() {
+            const flame = document.getElementById('flame');
+            if (flame.style.display !== 'none') {
+                flame.style.display = 'none';
+                alert('愿望许好啦！✨');
+                fireWorks();
+            } else {
+                flame.style.display = 'block'; // 再次点击点燃
+            }
+        });
+
+        function celebrate() {
+            // 播放多次烟花
+            var duration = 3 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            var random = function(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                var particleCount = 50 * (timeLeft / duration);
+                // 两个方向喷射
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+            
+            // 修改这里：按钮点击后的文字
+            document.querySelector('p').innerHTML = "愿你不仅生日快乐<br>而且天天快乐！💖";
+        }
+
+        function fireWorks() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+        }
+    </script>
+</body>
+</html>
