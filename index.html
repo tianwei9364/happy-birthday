@@ -42,7 +42,7 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            z-index: 100;
+            z-index: 1000; /* 保证在最上层 */
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
             animation: spin 3s linear infinite;
             animation-play-state: paused;
@@ -56,7 +56,7 @@
             width: 100%;
             max-width: 400px;
             position: relative;
-            height: 100vh; /* 占满全屏以便布局 */
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -74,13 +74,11 @@
         .name-highlight { color: #ff5722; font-size: 2.4rem; font-weight: bold; }
 
         /* 蛋糕部分 */
-        .cake-wrapper {
-            transition: transform 0.5s, opacity 0.5s;
-        }
+        .cake-wrapper { transition: transform 0.5s, opacity 0.5s; }
         .cake-container {
             position: relative;
             width: 160px;
-            height: 120px; /* 调整高度 */
+            height: 120px;
             margin: 0 auto;
             cursor: pointer;
         }
@@ -144,58 +142,29 @@
         }
         body.dark-mode .instruction { color: #fff; background: rgba(0,0,0,0.3); }
 
-        /* --- 卡通人物送礼动画区域 --- */
+        /* 卡通人物送礼区域 */
         .delivery-wrapper {
             position: absolute;
-            bottom: 30%; /* 屏幕中下方 */
-            right: -100%; /* 初始位置在屏幕外右侧 */
+            bottom: 30%;
+            right: -100%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            transition: right 2s cubic-bezier(0.19, 1, 0.22, 1); /* 平滑滑入 */
+            transition: right 2s cubic-bezier(0.19, 1, 0.22, 1);
             z-index: 50;
         }
-
-        /* 小熊形象 */
-        .bear-avatar {
-            font-size: 80px;
-            animation: walk 0.5s infinite alternate;
-        }
-        
-        /* 礼物盒 */
+        .bear-avatar { font-size: 80px; animation: walk 0.5s infinite alternate; }
         .gift-box-held {
-            font-size: 60px;
-            margin-top: -30px; /* 看起来像是抱在怀里 */
-            cursor: pointer;
+            font-size: 60px; margin-top: -30px; cursor: pointer;
             filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
             transition: transform 0.2s;
         }
-        
-        /* 走路摇摆动画 */
-        @keyframes walk {
-            from { transform: rotate(-5deg); }
-            to { transform: rotate(5deg); }
-        }
+        @keyframes walk { from { transform: rotate(-5deg); } to { transform: rotate(5deg); } }
+        .gift-ready { animation: bounceGift 1s infinite; }
+        @keyframes bounceGift { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .click-hint { color: #fff; font-size: 1rem; opacity: 0; margin-top: 10px; transition: opacity 1s; }
 
-        /* 礼物待领取时的跳动 */
-        .gift-ready {
-            animation: bounceGift 1s infinite;
-        }
-        @keyframes bounceGift {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        /* 点击提示箭头 */
-        .click-hint {
-            color: #fff;
-            font-size: 1rem;
-            opacity: 0;
-            margin-top: 10px;
-            transition: opacity 1s;
-        }
-
-        /* --- 最终祝福卡片 --- */
+        /* 祝福卡片 */
         .message-card {
             display: none;
             position: relative;
@@ -208,7 +177,6 @@
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
             z-index: 100;
         }
-        
         .wish-title { font-size: 1.2rem; color: #555; margin-bottom: 10px; font-weight: bold;}
         .wish-big {
             font-size: 2.2rem; line-height: 1.4; color: #d32f2f;
@@ -223,14 +191,20 @@
 </head>
 <body>
 
-    <div class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</div>
-    <audio id="bgMusic" loop>
-        <source src="https://sf3-cdn-tos.douyinstatic.com/obj/ies-music/7170534402506894086.mp3" type="audio/mpeg">
+    <!-- 音乐按钮 -->
+    <div class="music-btn" id="musicBtn">🎵</div>
+    
+    <!-- 音频标签，这里换了更稳定的链接 -->
+    <audio id="bgMusic" loop preload="auto">
+        <!-- 备选链接1：欢快版生日歌 -->
+        <source src="https://downsc.chinaz.net/Files/DownLoad/sound1/202210/16289.mp3" type="audio/mpeg">
+        <!-- 备选链接2：如果上面那个不出声，可以把下面这行解开注释试试 -->
+        <!-- <source src="https://downsc.chinaz.net/Files/DownLoad/sound1/201908/11869.mp3" type="audio/mpeg"> -->
     </audio>
 
     <div class="container">
         
-        <!-- 阶段1：蛋糕和标题 -->
+        <!-- 阶段1 -->
         <div id="cakeStage">
             <h1 id="mainTitle">Happy Birthday!<br><span class="name-highlight">湛江山</span></h1>
             <div class="cake-wrapper">
@@ -241,18 +215,17 @@
                     </div>
                 </div>
             </div>
-            <p class="instruction" id="cakeInst">🎵 开启音乐，吹灭蜡烛许个愿 🕯️</p>
+            <p class="instruction" id="cakeInst">🎵 触摸屏幕开启音乐，吹灭蜡烛许个愿 🕯️</p>
         </div>
 
-        <!-- 阶段2：卡通小熊送礼 (初始隐藏在屏幕外) -->
+        <!-- 阶段2 -->
         <div class="delivery-wrapper" id="deliveryGuy">
             <div class="bear-avatar">🐻</div>
-            <!-- 点击这个礼物 -->
             <div class="gift-box-held" id="giftBox" onclick="openGift()">🎁</div>
             <div class="click-hint" id="clickHint">👇 点这里拆开 👇</div>
         </div>
 
-        <!-- 阶段3：卡片 -->
+        <!-- 阶段3 -->
         <div class="message-card" id="messageCard">
             <div class="wish-title">To 湛江山：</div>
             <div class="wish-big">
@@ -270,37 +243,53 @@
     <script>
         const music = document.getElementById('bgMusic');
         const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
 
-        function toggleMusic() {
-            if (music.paused) {
-                music.play().catch(() => alert("请触摸屏幕以播放音频"));
-                musicBtn.classList.add('playing');
-            } else {
-                music.pause();
-                musicBtn.classList.remove('playing');
+        // 核心功能：触摸屏幕任何地方都尝试播放音乐
+        // 这样可以解决手机浏览器禁止自动播放的问题
+        function tryPlayMusic() {
+            if (!isPlaying) {
+                music.play().then(() => {
+                    isPlaying = true;
+                    musicBtn.classList.add('playing');
+                }).catch(e => {
+                    console.log("等待交互来播放音乐");
+                });
             }
         }
 
+        // 监听点击事件来播放音乐
+        document.body.addEventListener('click', tryPlayMusic);
+        document.body.addEventListener('touchstart', tryPlayMusic);
+
+        // 音乐按钮单独点击逻辑
+        musicBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // 防止冒泡冲突
+            if (isPlaying) {
+                music.pause();
+                musicBtn.classList.remove('playing');
+                isPlaying = false;
+            } else {
+                music.play();
+                musicBtn.classList.add('playing');
+                isPlaying = true;
+            }
+        });
+
         function blowCandle() {
+            tryPlayMusic(); // 确保点蛋糕时也能触发音乐
+
             const flame = document.getElementById('flame');
             if(flame.style.opacity === '0') return;
 
-            // 1. 灭火
             flame.style.opacity = '0';
-            
-            // 2. 关灯
             document.body.classList.add('dark-mode');
-            
-            // 3. 隐藏标题和提示，为了给小熊腾位置
             document.getElementById('mainTitle').style.opacity = '0';
             document.getElementById('cakeInst').style.opacity = '0';
             
-            // 震动反馈
             if(navigator.vibrate) navigator.vibrate(200);
 
-            // 4. 延迟1秒后，小熊进场
             setTimeout(() => {
-                // 蛋糕消失
                 document.getElementById('cakeStage').style.display = 'none';
                 startDelivery();
             }, 1000);
@@ -308,38 +297,24 @@
 
         function startDelivery() {
             const delivery = document.getElementById('deliveryGuy');
-            
-            // 小熊滑入屏幕中间
-            // 这里的 right: 50% 配合 CSS 的 flex 布局实现居中，稍微调整 transform 修正
             delivery.style.right = '50%'; 
             delivery.style.transform = 'translateX(50%)';
 
-            // 进场音效震动 (模拟脚步)
             if(navigator.vibrate) navigator.vibrate([50, 100, 50, 100]);
 
-            // 等待小熊走进来（2秒后）
             setTimeout(() => {
-                // 停止走路动画
                 document.querySelector('.bear-avatar').style.animation = 'none';
-                // 礼物开始跳动，提示可点击
                 document.getElementById('giftBox').classList.add('gift-ready');
-                // 显示文字提示
                 document.getElementById('clickHint').style.opacity = '1';
             }, 2000);
         }
 
         function openGift() {
-            // 开灯
             document.body.classList.remove('dark-mode');
-            
-            // 隐藏小熊和礼物
             document.getElementById('deliveryGuy').style.display = 'none';
-
-            // 显示卡片
             const card = document.getElementById('messageCard');
             card.style.display = 'block';
 
-            // 烟花庆祝
             launchConfetti();
             if(navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
         }
