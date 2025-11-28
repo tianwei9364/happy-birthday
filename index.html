@@ -2,84 +2,134 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生日快乐！</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>湛江山，生日快乐！</title>
     <style>
+        :root {
+            --primary: #ff6b6b;
+            --secondary: #ffc107;
+            --bg-color: #fdfbfb;
+        }
+
         body {
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
+            background: var(--bg-color);
             height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-family: 'Microsoft YaHei', sans-serif;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
             overflow: hidden;
+            transition: background 1s ease;
         }
+
+        body.dark-mode {
+            background: #2c3e50;
+        }
+
+        body.dark-mode h1, body.dark-mode p {
+            color: #ecf0f1;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        /* 音乐控制按钮 */
+        .music-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            animation: spin 3s linear infinite;
+            animation-play-state: paused;
+        }
+        
+        .music-btn.playing {
+            animation-play-state: running;
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
         .container {
             text-align: center;
             z-index: 10;
+            width: 90%;
+            max-width: 400px;
         }
 
         h1 {
-            color: #ff6b6b;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 1s forwards;
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 5px;
+            transition: color 0.5s;
         }
 
-        p {
-            color: #555;
-            font-size: 1.2rem;
+        .name-highlight {
+            color: var(--secondary);
+            font-size: 2.2rem;
+            display: inline-block;
+            animation: bounce 1s infinite alternate;
+        }
+
+        @keyframes bounce { to { transform: translateY(-5px); } }
+
+        p.instruction {
+            color: #888;
+            font-size: 1rem;
             margin-bottom: 30px;
-            opacity: 0;
-            transform: translateY(20px);
-            animation: fadeUp 1s 0.5s forwards;
         }
 
-        /* 简单的 CSS 蛋糕 */
-        .cake {
+        /* 蛋糕样式 */
+        .cake-container {
             position: relative;
-            width: 150px;
-            height: 120px;
-            background: #fce4ec;
-            border-radius: 10px 10px 5px 5px;
-            margin: 0 auto 50px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: center;
+            height: 150px;
+            margin-bottom: 40px;
             cursor: pointer;
             transition: transform 0.3s;
         }
+        
+        .cake-container:active { transform: scale(0.95); }
 
-        .cake:active {
-            transform: scale(0.95);
-        }
-
-        .layer {
+        .cake {
             position: absolute;
             bottom: 0;
-            width: 100%;
-            height: 40px;
-            background: #f8bbd0;
-            border-radius: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 100px;
+            background: #fce4ec;
+            border-radius: 10px 10px 5px 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        
-        .layer-top {
-            bottom: 40px;
+
+        .cake::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 0;
+            width: 100%;
+            height: 10px;
             background: #f48fb1;
+            box-shadow: 0 20px 0 #f48fb1;
         }
 
         .candle {
             position: absolute;
-            top: -30px;
-            width: 10px;
-            height: 30px;
-            background: #ffc107;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 35px;
+            background: linear-gradient(#fff, #eee);
             border-radius: 2px;
         }
 
@@ -88,105 +138,245 @@
             top: -15px;
             left: 50%;
             transform: translateX(-50%);
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             background: #ff5722;
             border-radius: 50% 50% 20% 20%;
-            animation: flicker 1s infinite alternate;
-            box-shadow: 0 0 10px #ff5722;
-        }
-
-        .btn {
-            padding: 12px 30px;
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
-            transition: all 0.3s;
-        }
-
-        .btn:hover {
-            background: #ff5252;
-            transform: translateY(-2px);
+            animation: flicker 0.5s infinite alternate;
+            box-shadow: 0 0 10px #ff5722, 0 0 20px #ffc107;
+            transition: opacity 0.5s;
         }
 
         @keyframes flicker {
-            0% { transform: translateX(-50%) scale(1); opacity: 1; }
-            100% { transform: translateX(-50%) scale(1.2); opacity: 0.8; }
+            0% { transform: translateX(-50%) scale(1); opacity: 0.9; }
+            100% { transform: translateX(-50%) scale(1.1); opacity: 1; }
         }
 
-        @keyframes fadeUp {
-            to { opacity: 1; transform: translateY(0); }
+        /* 礼物盒样式 */
+        .gift-box {
+            display: none;
+            font-size: 80px;
+            cursor: pointer;
+            animation: shake 2s infinite;
         }
+
+        @keyframes shake {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(5deg); }
+            75% { transform: rotate(-5deg); }
+        }
+
+        /* 祝福语区域 */
+        .message-card {
+            display: none;
+            background: rgba(255,255,255,0.9);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-top: 20px;
+            animation: popIn 0.5s forwards;
+        }
+
+        .message-card p {
+            font-size: 1.2rem;
+            color: #333;
+            line-height: 1.6;
+            font-weight: bold;
+            text-align: left;
+            min-height: 80px;
+        }
+
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* 背景漂浮物 */
+        .floating-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .bubble {
+            position: absolute;
+            bottom: -50px;
+            background: rgba(255, 107, 107, 0.1);
+            border-radius: 50%;
+            animation: floatUp 15s infinite linear;
+        }
+
+        @keyframes floatUp {
+            to { transform: translateY(-120vh) rotate(360deg); }
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Happy Birthday!湛江山 🎂</h1>
-        <p>祝你不劳而获，坐享其成，无功受禄，突然暴富！<br>点一下蛋糕许个愿吧！</p>
+    <!-- 音乐 -->
+    <div class="music-btn" id="musicBtn" onclick="toggleMusic()">🎵</div>
+    <audio id="bgMusic" loop>
+        <source src="https://sf3-cdn-tos.douyinstatic.com/obj/ies-music/7170534402506894086.mp3" type="audio/mpeg">
+    </audio>
 
-        <div class="cake" id="cakeBtn">
-            <div class="layer"></div>
-            <div class="layer layer-top"></div>
-            <div class="candle">
-                <div class="flame" id="flame"></div>
+    <!-- 背景漂浮装饰 -->
+    <div class="floating-bg" id="bgDecor"></div>
+
+    <div class="container">
+        <h1>Happy Birthday! <br><span class="name-highlight">湛江山</span></h1>
+        
+        <!-- 第一阶段：吹蜡烛 -->
+        <div id="stage1">
+            <p class="instruction">点亮音乐，点击蛋糕吹灭蜡烛许愿 🕯️</p>
+            <div class="cake-container" onclick="blowCandle()">
+                <div class="cake"></div>
+                <div class="candle">
+                    <div class="flame" id="flame"></div>
+                </div>
             </div>
         </div>
 
-        <button class="btn" onclick="celebrate()">点击领取礼物</button>
+        <!-- 第二阶段：拆礼物 -->
+        <div id="stage2" style="display: none;">
+            <p class="instruction" style="color: #fff">愿望许好啦！<br>点击下方礼物盒查收祝福 🎁</p>
+            <div class="gift-box" id="giftBox" onclick="openGift()">🎁</div>
+        </div>
+
+        <!-- 第三阶段：展示祝福 -->
+        <div class="message-card" id="messageCard">
+            <p id="typewriterText"></p>
+        </div>
     </div>
 
-    <!-- 引用烟花特效库 -->
+    <!-- 烟花库 -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
+
     <script>
-        // 点击蛋糕吹灭蜡烛
-        document.getElementById('cakeBtn').addEventListener('click', function() {
-            const flame = document.getElementById('flame');
-            if (flame.style.display !== 'none') {
-                flame.style.display = 'none';
-                alert('愿望许好啦！✨');
-                fireWorks();
-            } else {
-                flame.style.display = 'block'; // 再次点击点燃
+        // 初始化背景漂浮物
+        function initBg() {
+            const bg = document.getElementById('bgDecor');
+            for(let i=0; i<15; i++) {
+                const b = document.createElement('div');
+                b.className = 'bubble';
+                const size = Math.random() * 50 + 20;
+                b.style.width = size + 'px';
+                b.style.height = size + 'px';
+                b.style.left = Math.random() * 100 + '%';
+                b.style.animationDuration = (Math.random() * 10 + 5) + 's';
+                b.style.animationDelay = (Math.random() * 5) + 's';
+                bg.appendChild(b);
             }
-        });
+        }
+        initBg();
 
-        function celebrate() {
-            // 播放多次烟花
-            var duration = 3 * 1000;
-            var animationEnd = Date.now() + duration;
-            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
-
-            var random = function(min, max) { return Math.random() * (max - min) + min; }
-
-            var interval = setInterval(function() {
-                var timeLeft = animationEnd - Date.now();
-
-                if (timeLeft <= 0) {
-                    return clearInterval(interval);
-                }
-
-                var particleCount = 50 * (timeLeft / duration);
-                // 两个方向喷射
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 } }));
-                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 } }));
-            }, 250);
-            
-            // 修改这里：按钮点击后的文字
-            document.querySelector('p').innerHTML = "愿你不仅生日快乐<br>而且天天快乐！💖";
+        // 音乐控制
+        const music = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        function toggleMusic() {
+            if (music.paused) {
+                music.play();
+                musicBtn.classList.add('playing');
+            } else {
+                music.pause();
+                musicBtn.classList.remove('playing');
+            }
         }
 
-        function fireWorks() {
+        // 吹蜡烛逻辑
+        function blowCandle() {
+            const flame = document.getElementById('flame');
+            if(flame.style.opacity === '0') return; // 防止重复点击
+
+            // 熄灭动画
+            flame.style.opacity = '0';
+            document.body.classList.add('dark-mode'); // 变暗模式
+            
+            // 提示音效可加可不加，这里用震动反馈
+            if(navigator.vibrate) navigator.vibrate(200);
+
+            setTimeout(() => {
+                alert("🕯️ 蜡烛已吹灭，愿望许好啦！\n快去看看有没有礼物掉落...");
+                
+                // 切换场景
+                document.getElementById('stage1').style.display = 'none';
+                document.getElementById('stage2').style.display = 'block';
+                document.body.classList.remove('dark-mode'); // 恢复亮度
+                
+                // 播放烟花
+                fireWorks(0.5);
+            }, 1000);
+        }
+
+        // 拆礼物逻辑
+        function openGift() {
+            const giftBox = document.getElementById('giftBox');
+            giftBox.style.animation = 'none'; // 停止晃动
+            giftBox.innerHTML = '🎉'; // 变成拉炮图标
+            
+            // 大规模烟花
+            launchConfetti();
+            if(navigator.vibrate) navigator.vibrate([100, 50, 100]);
+
+            setTimeout(() => {
+                document.getElementById('stage2').style.display = 'none';
+                const card = document.getElementById('messageCard');
+                card.style.display = 'block';
+                
+                // 打字机效果输出祝福
+                const text = "To 湛江山：\n祝你不劳而获，坐享其成！\n无功受禄，突然暴富！\n不仅生日快乐，更要天天快乐！💰✨";
+                typeWriter(text, document.getElementById('typewriterText'));
+            }, 800);
+        }
+
+        // 打字机效果
+        function typeWriter(text, element, index = 0) {
+            if (index < text.length) {
+                if(text.charAt(index) === '\n') {
+                    element.innerHTML += '<br>';
+                } else {
+                    element.innerHTML += text.charAt(index);
+                }
+                setTimeout(() => typeWriter(text, element, index + 1), 100);
+            }
+        }
+
+        // 烟花特效封装
+        function fireWorks(y) {
             confetti({
                 particleCount: 100,
                 spread: 70,
-                origin: { y: 0.6 }
+                origin: { y: y }
             });
+        }
+
+        function launchConfetti() {
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
         }
     </script>
 </body>
